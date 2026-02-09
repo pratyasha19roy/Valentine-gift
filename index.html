@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Memory Box</title>
+    <style>
+        :root {
+            --bg-color: #fff0f5; /* Very light pink */
+            --box-color: #ffdae0;
+            --ribbon-color: #ff3333;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 300vh; /* Extra height to allow scrolling */
+            overflow-x: hidden;
+        }
+
+        /* Sparkle Background Effect */
+        .sparkles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background-image: 
+                radial-gradient(circle, white 1px, transparent 1px),
+                radial-gradient(circle, white 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: 0 0, 25px 25px;
+            opacity: 0.5;
+            animation: sparkleAnim 5s linear infinite;
+        }
+
+        @keyframes sparkleAnim {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50px); }
+        }
+
+        /* The Box Container */
+        .scene {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 150px;
+            z-index: 10;
+        }
+
+        .box-body {
+            position: absolute;
+            bottom: 0;
+            width: 200px;
+            height: 120px;
+            background: var(--box-color);
+            border: 2px solid #f8bbd0;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1), inset 0 0 20px white;
+            border-radius: 5px;
+        }
+
+        .ribbon-v {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 100%;
+            background: var(--ribbon-color);
+        }
+
+        .lid {
+            position: absolute;
+            top: -20px;
+            left: 220px; /* Initially next to the box */
+            width: 210px;
+            height: 30px;
+            background: var(--box-color);
+            border: 2px solid #f8bbd0;
+            border-radius: 5px;
+            transition: all 0.5s ease;
+            z-index: 11;
+        }
+
+        /* Polaroid Images */
+        .photo-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .polaroid {
+            position: absolute;
+            padding: 10px 10px 30px 10px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border: 1px solid #ddd;
+            width: 150px;
+            transition: transform 0.1s linear, opacity 0.3s;
+        }
+
+        .polaroid img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .caption {
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: #555;
+        }
+
+        /* Hidden Message */
+        #final-message {
+            position: absolute;
+            bottom: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s;
+            font-weight: bold;
+            color: #d81b60;
+            font-size: 1.5rem;
+            width: 80%;
+        }
+
+        .instruction {
+            position: fixed;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sparkles"></div>
+    <div class="instruction">Scroll down to pack the memories...</div>
+
+    <div class="photo-container" id="gallery">
+        <div class="polaroid" data-x="10" data-y="10" data-rot="-15">
+            <img src="image1.jpg" alt="Memory 1">
+            <div class="caption">Sweet Moments</div>
+        </div>
+        <div class="polaroid" data-x="70" data-y="15" data-rot="10">
+            <img src="image2.jpg" alt="Memory 2">
+            <div class="caption">Happy Days</div>
+        </div>
+        <div class="polaroid" data-x="30" data-y="40" data-rot="-5">
+            <img src="image3.jpg" alt="Memory 3">
+            <div class="caption">The Best Trip</div>
+        </div>
+        <div class="polaroid" data-x="60" data-y="50" data-rot="15">
+            <img src="image4.jpg" alt="Memory 4">
+            <div class="caption">Laughter</div>
+        </div>
+    </div>
+
+    <div class="scene">
+        <div id="final-message">Every memory is safe in here. ❤️</div>
+        <div id="lid" class="lid"><div class="ribbon-v" style="height: 30px;"></div></div>
+        <div class="box-body">
+            <div class="ribbon-v"></div>
+        </div>
+    </div>
+
+    <script>
+        const gallery = document.querySelectorAll('.polaroid');
+        const lid = document.getElementById('lid');
+        const msg = document.getElementById('final-message');
+        const box = document.querySelector('.scene');
+
+        // Initial positions (scattered)
+        gallery.forEach(img => {
+            const x = img.getAttribute('data-x');
+            const y = img.getAttribute('data-y');
+            const r = img.getAttribute('data-rot');
+            img.style.left = x + "%";
+            img.style.top = y + "%";
+            img.style.transform = `rotate(${r}deg)`;
+        });
+
+        window.addEventListener('scroll', () => {
+            const scrollPercent = window.scrollY / (document.body.offsetHeight - window.innerHeight);
+            
+            gallery.forEach((img, index) => {
+                const startX = parseFloat(img.getAttribute('data-x'));
+                const startY = parseFloat(img.getAttribute('data-y'));
+                const startRot = parseFloat(img.getAttribute('data-rot'));
+
+                // Calculate target (center of the box)
+                const targetX = 50; // Middle of screen
+                const targetY = 80; // Near bottom box
+
+                // Move images towards box as we scroll
+                const currentX = startX + (targetX - startX) * scrollPercent;
+                const currentY = startY + (targetY - startY) * scrollPercent;
+                const currentRot = startRot - (startRot * scrollPercent);
+                const scale = 1 - (scrollPercent * 0.8);
+                const opacity = 1 - (scrollPercent > 0.9 ? (scrollPercent - 0.9) * 10 : 0);
+
+                img.style.left = `${currentX}%`;
+                img.style.top = `${currentY}%`;
+                img.style.transform = `translate(-50%, -50%) rotate(${currentRot}deg) scale(${scale})`;
+                img.style.opacity = opacity;
+            });
+
+            // Lid animation
+            if (scrollPercent > 0.8) {
+                // Move lid back onto the box
+                lid.style.left = "-5px";
+                lid.style.top = "-25px";
+                lid.style.transform = "rotate(0deg)";
+            } else {
+                // Move lid to the side
+                lid.style.left = "220px";
+                lid.style.top = "-20px";
+                lid.style.transform = "rotate(10deg)";
+            }
+
+            // Message animation
+            if (scrollPercent > 0.95) {
+                msg.style.opacity = "1";
+            } else {
+                msg.style.opacity = "0";
+            }
+        });
+    </script>
+</body>
+</html>
