@@ -6,21 +6,21 @@
     <title>My Memory Box</title>
     <style>
         :root {
-            --bg-color: #fff0f5; /* Very light pink */
-            --box-color: #ffdae0;
-            --ribbon-color: #ff3333;
+            --bg-color: #fff0f5; /* Lightest Pink */
+            --box-color: #ffc1cc; /* Glowing pink box */
+            --ribbon-color: #ff0000; /* Red Ribbon */
         }
 
         body {
             margin: 0;
             padding: 0;
             background-color: var(--bg-color);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            height: 300vh; /* Extra height to allow scrolling */
+            font-family: 'Courier New', Courier, monospace;
+            height: 400vh; /* Long scroll for 8 images */
             overflow-x: hidden;
         }
 
-        /* Sparkle Background Effect */
+        /* Sparkle Background */
         .sparkles {
             position: fixed;
             top: 0;
@@ -28,67 +28,62 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 0;
             background-image: 
-                radial-gradient(circle, white 1px, transparent 1px),
-                radial-gradient(circle, white 1px, transparent 1px);
-            background-size: 50px 50px;
-            background-position: 0 0, 25px 25px;
-            opacity: 0.5;
-            animation: sparkleAnim 5s linear infinite;
+                radial-gradient(circle, #ffffff 1px, transparent 1px),
+                radial-gradient(circle, #ffe4e1 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            opacity: 0.8;
+            z-index: 0;
         }
 
-        @keyframes sparkleAnim {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-50px); }
-        }
-
-        /* The Box Container */
-        .scene {
+        /* The Box & Ribbon */
+        .box-container {
             position: fixed;
-            bottom: 50px;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            width: 200px;
-            height: 150px;
+            width: 220px;
+            height: 160px;
             z-index: 10;
         }
 
         .box-body {
             position: absolute;
             bottom: 0;
-            width: 200px;
+            width: 100%;
             height: 120px;
             background: var(--box-color);
-            border: 2px solid #f8bbd0;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1), inset 0 0 20px white;
-            border-radius: 5px;
+            border: 3px solid #f8bbd0;
+            box-shadow: 0 0 20px rgba(255, 182, 193, 0.8); /* Glowing effect */
+            border-radius: 8px;
         }
 
-        .ribbon-v {
+        .ribbon-vertical {
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            width: 30px;
+            width: 35px;
             height: 100%;
             background: var(--ribbon-color);
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }
 
         .lid {
             position: absolute;
             top: -20px;
-            left: 220px; /* Initially next to the box */
-            width: 210px;
-            height: 30px;
+            left: 240px; /* Open and to the side */
+            width: 230px;
+            height: 35px;
             background: var(--box-color);
-            border: 2px solid #f8bbd0;
-            border-radius: 5px;
-            transition: all 0.5s ease;
+            border: 3px solid #f8bbd0;
+            border-radius: 8px;
+            transition: all 0.6s ease-out;
             z-index: 11;
         }
 
-        /* Polaroid Images */
-        .photo-container {
+        /* Polaroids */
+        .photo-area {
             position: fixed;
             top: 0;
             left: 0;
@@ -99,148 +94,147 @@
 
         .polaroid {
             position: absolute;
-            padding: 10px 10px 30px 10px;
+            padding: 10px 10px 35px 10px;
             background: white;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            border: 1px solid #ddd;
-            width: 150px;
-            transition: transform 0.1s linear, opacity 0.3s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            width: 140px;
+            text-align: center;
+            transition: transform 0.1s linear;
         }
 
         .polaroid img {
-            width: 150px;
-            height: 150px;
+            width: 100%;
+            height: 130px;
             object-fit: cover;
+            border: 1px solid #eee;
         }
 
         .caption {
-            position: absolute;
-            bottom: 5px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            font-size: 12px;
-            color: #555;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #d81b60;
+            background: #fff9fa;
+            border-radius: 4px;
+            padding: 2px;
         }
 
-        /* Hidden Message */
-        #final-message {
+        #final-msg {
             position: absolute;
-            bottom: 160px;
+            bottom: 180px;
             left: 50%;
             transform: translateX(-50%);
-            text-align: center;
+            font-size: 24px;
+            color: #ff0000;
+            font-weight: bold;
             opacity: 0;
             transition: opacity 0.5s;
-            font-weight: bold;
-            color: #d81b60;
-            font-size: 1.5rem;
-            width: 80%;
+            text-align: center;
+            width: 100%;
         }
 
-        .instruction {
+        .scroll-hint {
             position: fixed;
             top: 20px;
             width: 100%;
             text-align: center;
-            color: #888;
-            font-style: italic;
+            color: #f06292;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
 
-    <div class="sparkles"></div>
-    <div class="instruction">Scroll down to pack the memories...</div>
+<div class="sparkles"></div>
+<div class="scroll-hint">✨ Scroll down to save the memories ✨</div>
 
-    <div class="photo-container" id="gallery">
-        <div class="polaroid" data-x="10" data-y="10" data-rot="-15">
-            <img src="image1.jpg" alt="Memory 1">
-            <div class="caption">Sweet Moments</div>
-        </div>
-        <div class="polaroid" data-x="70" data-y="15" data-rot="10">
-            <img src="image2.jpg" alt="Memory 2">
-            <div class="caption">Happy Days</div>
-        </div>
-        <div class="polaroid" data-x="30" data-y="40" data-rot="-5">
-            <img src="image3.jpg" alt="Memory 3">
-            <div class="caption">The Best Trip</div>
-        </div>
-        <div class="polaroid" data-x="60" data-y="50" data-rot="15">
-            <img src="image4.jpg" alt="Memory 4">
-            <div class="caption">Laughter</div>
-        </div>
+<div class="photo-area" id="photo-area">
+    <div class="polaroid" style="top:10%; left:10%;" data-x="10" data-y="10" data-r="-10">
+        <img src="IMG1.jpg">
+        <div class="caption">Memory 1</div>
     </div>
-
-    <div class="scene">
-        <div id="final-message">Every memory is safe in here. ❤️</div>
-        <div id="lid" class="lid"><div class="ribbon-v" style="height: 30px;"></div></div>
-        <div class="box-body">
-            <div class="ribbon-v"></div>
-        </div>
+    <div class="polaroid" style="top:15%; left:60%;" data-x="60" data-y="15" data-r="15">
+        <img src="IMG2.JPG">
+        <div class="caption">Memory 2</div>
     </div>
+    <div class="polaroid" style="top:40%; left:20%;" data-x="20" data-y="40" data-r="-5">
+        <img src="IMG3.jpg">
+        <div class="caption">Memory 3</div>
+    </div>
+    <div class="polaroid" style="top:35%; left:75%;" data-x="75" data-y="35" data-r="10">
+        <img src="IMG4.jpg">
+        <div class="caption">Memory 4</div>
+    </div>
+    <div class="polaroid" style="top:60%; left:15%;" data-x="15" data-y="60" data-r="-15">
+        <img src="IMG5.jpg">
+        <div class="caption">Memory 5</div>
+    </div>
+    <div class="polaroid" style="top:55%; left:55%;" data-x="55" data-y="55" data-r="5">
+        <img src="IMG6.jpg">
+        <div class="caption">Memory 6</div>
+    </div>
+    <div class="polaroid" style="top:10%; left:40%;" data-x="40" data-y="10" data-r="8">
+        <img src="IMG7.jpg">
+        <div class="caption">Memory 7</div>
+    </div>
+    <div class="polaroid" style="top:65%; left:70%;" data-x="70" data-y="65" data-r="-8">
+        <img src="IMG8.jpg">
+        <div class="caption">Memory 8</div>
+    </div>
+</div>
 
-    <script>
-        const gallery = document.querySelectorAll('.polaroid');
-        const lid = document.getElementById('lid');
-        const msg = document.getElementById('final-message');
-        const box = document.querySelector('.scene');
+<div class="box-container">
+    <div id="final-msg">All your memories are safe! ❤️</div>
+    <div id="lid" class="lid">
+        <div class="ribbon-vertical" style="height: 35px;"></div>
+    </div>
+    <div class="box-body">
+        <div class="ribbon-vertical"></div>
+    </div>
+</div>
 
-        // Initial positions (scattered)
-        gallery.forEach(img => {
-            const x = img.getAttribute('data-x');
-            const y = img.getAttribute('data-y');
-            const r = img.getAttribute('data-rot');
-            img.style.left = x + "%";
-            img.style.top = y + "%";
-            img.style.transform = `rotate(${r}deg)`;
+<script>
+    const photos = document.querySelectorAll('.polaroid');
+    const lid = document.getElementById('lid');
+    const msg = document.getElementById('final-msg');
+
+    window.addEventListener('scroll', () => {
+        let scrollFraction = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+        
+        photos.forEach(photo => {
+            let startX = parseFloat(photo.getAttribute('data-x'));
+            let startY = parseFloat(photo.getAttribute('data-y'));
+            let startR = parseFloat(photo.getAttribute('data-r'));
+
+            // Calculate movement toward the box (50% left, 85% top)
+            let moveX = startX + (50 - startX) * scrollFraction;
+            let moveY = startY + (85 - startY) * scrollFraction;
+            let moveR = startR * (1 - scrollFraction);
+            let scale = 1 - (scrollFraction * 0.7);
+            let opacity = 1 - (scrollFraction > 0.9 ? (scrollFraction - 0.9) * 10 : 0);
+
+            photo.style.left = moveX + '%';
+            photo.style.top = moveY + '%';
+            photo.style.transform = `translate(-50%, -50%) rotate(${moveR}deg) scale(${scale})`;
+            photo.style.opacity = opacity;
         });
 
-        window.addEventListener('scroll', () => {
-            const scrollPercent = window.scrollY / (document.body.offsetHeight - window.innerHeight);
-            
-            gallery.forEach((img, index) => {
-                const startX = parseFloat(img.getAttribute('data-x'));
-                const startY = parseFloat(img.getAttribute('data-y'));
-                const startRot = parseFloat(img.getAttribute('data-rot'));
+        // Close the lid
+        if (scrollFraction > 0.85) {
+            lid.style.left = "-5px";
+            lid.style.top = "-28px";
+        } else {
+            lid.style.left = "240px";
+            lid.style.top = "-20px";
+        }
 
-                // Calculate target (center of the box)
-                const targetX = 50; // Middle of screen
-                const targetY = 80; // Near bottom box
+        // Show the message
+        if (scrollFraction > 0.98) {
+            msg.style.opacity = "1";
+        } else {
+            msg.style.opacity = "0";
+        }
+    });
+</script>
 
-                // Move images towards box as we scroll
-                const currentX = startX + (targetX - startX) * scrollPercent;
-                const currentY = startY + (targetY - startY) * scrollPercent;
-                const currentRot = startRot - (startRot * scrollPercent);
-                const scale = 1 - (scrollPercent * 0.8);
-                const opacity = 1 - (scrollPercent > 0.9 ? (scrollPercent - 0.9) * 10 : 0);
-
-                img.style.left = `${currentX}%`;
-                img.style.top = `${currentY}%`;
-                img.style.transform = `translate(-50%, -50%) rotate(${currentRot}deg) scale(${scale})`;
-                img.style.opacity = opacity;
-            });
-
-            // Lid animation
-            if (scrollPercent > 0.8) {
-                // Move lid back onto the box
-                lid.style.left = "-5px";
-                lid.style.top = "-25px";
-                lid.style.transform = "rotate(0deg)";
-            } else {
-                // Move lid to the side
-                lid.style.left = "220px";
-                lid.style.top = "-20px";
-                lid.style.transform = "rotate(10deg)";
-            }
-
-            // Message animation
-            if (scrollPercent > 0.95) {
-                msg.style.opacity = "1";
-            } else {
-                msg.style.opacity = "0";
-            }
-        });
-    </script>
 </body>
 </html>
